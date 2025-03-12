@@ -1,0 +1,7 @@
+apiVersion: essendixc.angeloxx.ch/v1alpha1
+kind: Issuer
+metadata:
+  name: issuer-sample
+spec:
+  authSecretName: "issuer-sample-credentials"
+  url: "http://essendixc.angeloxx.ch/api/v1"
