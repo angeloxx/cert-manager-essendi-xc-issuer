@@ -94,7 +94,7 @@ We recommend to use the Helm chart to install the Essendi-XC Issuer. The Helm ch
 
 
 ```console
-helm install essendi-xc-issuer oci://registry-1.docker.io/angeloxx/cert-manager-essendi-issuer --version 0.0.10-helm --namespace cert-manager
+helm install essendi-xc-issuer oci://registry-1.docker.io/angeloxx/cert-manager-essendi-issuer --version -helm --namespace cert-manager
 ```
 
 # License
