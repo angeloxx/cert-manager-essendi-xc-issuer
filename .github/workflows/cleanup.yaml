@@ -1,0 +1,20 @@
+name: cleanup
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  clean:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: docker hub retention
+        id: docker-hub-retention
+        uses: philiplehmann/docker-hub-retention@main
+        with:
+          repository: angeloxx/cert-manager-essendi-issuer
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          multiple: |
+            - match: .*-next-.*
+              retention: 1d
