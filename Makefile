@@ -11,6 +11,11 @@ TAG := $(shell git describe --abbrev=0 --tags ${TAG_COMMIT} 2>/dev/null || true)
 COMMIT := $(shell git rev-parse --short HEAD)
 DATE := $(shell git log -1 --format=%cd --date=format:"%Y%m%d")
 VERSION := $(TAG:v%=%)
+
+ifeq ($(VERSION),)
+	VERSION := 0.0.0
+endif
+
 ifneq ($(COMMIT), $(TAG_COMMIT))
 	VERSION := $(VERSION)-next-$(COMMIT)-$(DATE)
 endif
@@ -154,16 +159,11 @@ docker-push: ## Push docker image with the manager.
 PLATFORMS ?= linux/arm64,linux/amd64
 .PHONY: build-image
 build-image: ko # vulncheck
-	KO_DOCKER_REPO=$(IMAGE) \
-    VERSION=$(VERSION) \
-    ko build --tags ${VERSION} --bare \
+	KO_DOCKER_REPO=${IMAGE} \
+    ko build --tags ${IMAGE_TAG} --bare --sbom ${IMG_SBOM} \
+      --image-label org.opencontainers.image.source="https://github.com/angeloxx/cert-manager-essendi-xc-issuer" \
       --image-label org.opencontainers.image.revision=$(shell git rev-parse HEAD) \
-      --platform=${PLATFORMS} --push=true .
-
-    # ko build --tags ${VERSION} --bare --sbom ${IMG_SBOM} \
-    # --image-label org.opencontainers.image.source="https://github.com/angeloxx/cert-manager-essendi-issuer" \
-    # --image-label org.opencontainers.image.revision=$(shell git rev-parse HEAD) \
-    # --platform=${PLATFORMS} --push=true .
+      --platform=${PLATFORMS}  --push=true .
 
 ##@ Deployment
 
