@@ -45,7 +45,7 @@ metadata:
 spec:
   authSecretName: <auth-secret-reference-in-cert-manager-namespace>
   ignoreHostInApiResponse: true|false
-  profileName: <ussuing-profile-name>
+  profileName: <issuing-profile-name>
   subscriberName: <subscriber-name>
   url: <essendi-xc-api-url>
   customFields:
