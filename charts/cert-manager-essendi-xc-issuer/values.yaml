@@ -8,7 +8,7 @@ image:
   repository: angeloxx/cert-manager-essendi-xc-issuer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "0.0.11-next-0943c07-20250510-dirty"
 
 imagePullSecrets: []
 nameOverride: ""
