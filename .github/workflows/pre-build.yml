@@ -6,11 +6,12 @@ on:
 jobs:
 
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
     if: contains(join(github.event.pull_request.labels.*.name, ','), 'pre-release')
     strategy:
       matrix:
-        go-version: [ '1.23.8' ]
+        go-version: [ '1.24.0' ]
 
     steps:
       - uses: actions/checkout@v4
@@ -55,5 +56,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 build with success, image tag is ${{ needs.build.outputs.image_version }}'
+              body: '👋 built with success, image tag is latest, helm tag is 0.0.0-latest'
             })
