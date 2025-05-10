@@ -13,72 +13,78 @@ Essendi-XC Issuer has been tested with cert-manager v.1.13.0 and currently suppo
 # Configuration and usage
 ## Issuers
 
-The Essendi-XC service data can be configured in EssendiXCIssuer or ClusterEssendiXCIssuer CRD objects e.g.:
+The Essendi-XC service data can be configured in Issuer or ClusterIssuer CRD objects e.g.:
 
 ```yaml
-apiVersion: essendixc.angeloxx.ch/v1
-kind: ClusterEssendiXCIssuer
+apiVersion: essendixc.angeloxx.ch/v1alpha1
+kind: ClusterIssuer
 metadata:
   name: test-integration
-  namespace: <namespace>
 spec:
-  credentialsRef:
-    name: essendi-xc-issuer-credentials
-  url: <essendi-xc-api-url>
-  profileName: <issuing-profile-name>
+  authSecretName: <auth-secret-reference-in-cert-manager-namespace>
+  ignoreHostInApiResponse: true|false
+  profileName: <ussuing-profile-name>
   subscriberName: <subscriber-name>
-  realm: <authentication-realm>
+  url: <essendi-xc-api-url>
 ```
 
-The caBundle parameter is BASE64-encoded CA certificate which is used by the ADCS server itself, which may not be the same certificate that will be used to sign your request.
+Required parameters are:
+* authSecretName: name of the secret that contains the credentials used to authenticate with the Essendi XC API
+* ignoreHostInApiResponse: if set to true, the issuer will ignore the host in the API response. This is useful when using a load balancer or reverse proxy in front of the Essendi XC API.
+* profileName: name of the profile defined in the Essendi XC. This is the profile that will be used to issue the certificate.
+* subscriberName: name of the subscriber defined in the Essendi XC.
+* url: the base URL of the Essendi XC API server.
 
-The statusCheckInterval indicates how often the status of the request should be tested. Typically, it can take a few hours or even days before the certificate is issued.
+optionally you can define also a set of custom fields that will be passed to the Essendi XC API and added as metadata to all the requests. Custom fields must be previously defined in the Essendi XC, then the CRD can be used to set it, eg:
 
-The retryInterval says how long to wait before retrying requests that errored.
+```yaml
+apiVersion: essendixc.angeloxx.ch/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: test-integration
+spec:
+  authSecretName: <auth-secret-reference-in-cert-manager-namespace>
+  ignoreHostInApiResponse: true|false
+  profileName: <ussuing-profile-name>
+  subscriberName: <subscriber-name>
+  url: <essendi-xc-api-url>
+  customFields:
+  - name: Application
+    value: '{{ .Csr.CommonName }}'
+  - name: DeploymentTarget
+    value: Kubernetes
+  - name: Environment
+    value: Testing Environment
+  - name: NotificationMail
+    value: cloudnatives@bigcorp.ch
+```
 
-The credentialsRef.name is name of a secret that stores user credentials used for NTLM authentication. The secret must be Opaque and contain password and username fields only e.g.:
+You have also to define the secret containing the credentials used to authenticate with the Essendi XC API. The secret must be in the same namespace as the cert-manager controller:
 
 ```yaml
 apiVersion: v1
-data:
-  clientId: my-essendi-user
-  offlineToken: eyJhbGciOiJIUzI1NiIsInR5cCIgOi...
 kind: Secret
 metadata:
-  name: essendi-xc-issuer-credentials
-  namespace: <namespace>
-type: Opaque
+  name: essendixc-cert-manager
+  namespace: cert-manager
+data:
+  client-id: <essendi-xc-client-id>
+  client-secret: <client-secret>
+  signature-key: <request-signature-key>
+  token: eyJhbGciOiJIUzI1NiIsInR5cCIgOi[...]
 ```
 
-If cluster level issuer configuration is needed then ClusterAdcsUssuer can be defined like this:
-
-```yaml
-apiVersion: essendixc.certmanager.angeloxx.ch/v1
-kind: ClusterAdcsIssuer
-metadata:
-  name: test-adcs
-spec:
-  caBundle: <base64-encoded-ca-certificate>
-  credentialsRef:
-    name: test-essendixc-issuer-credentials
-  statusCheckInterval: 6h
-  retryInterval: 1h
-  url: <essendixc-api-url>
-  profileName: <issuing-profile-name>
-  subscriberName: <subscriber-name>
-  customFields:
-    field1: value1
-    field2: value2
-    field3: {{ .Csr.CommonName }}
-```
-
-The secret used by the ClusterEssendiXCIssuer to authenticate (credentialsRef), must be defined in the namespace 
-where the controller's pod is running, or in the namespace specified by the flag -clusterResourceNamespace (default: kube-system).
+The secret must be Opaque and contain the following fields:
+* client-id: the client ID used to authenticate with the Essendi XC API
+* client-secret: the client secret used to authenticate with the Essendi XC API
+* signature-key: the key used to sign the request
+* token: the token used to authenticate
 
 ### Template support for customFields
 
 CustomFields can be used to pass additional information to the Essendi-XC API. The customFields are rendered using Go templates and
 you can use the following variables:
+
 * Csr.CommonName: the common name of the requested certificate
 * Csr.Organization: the organization of the requested certificate
 * Csr.OrganizationalUnit: the organizational unit of the requested certificate
@@ -94,7 +100,7 @@ We recommend to use the Helm chart to install the Essendi-XC Issuer. The Helm ch
 
 
 ```console
-helm install essendi-xc-issuer oci://registry-1.docker.io/angeloxx/cert-manager-essendi-issuer --version <version>-helm --namespace cert-manager
+helm install essendi-xc-issuer oci://registry-1.docker.io/angeloxx/cert-manager-essendi-xc-issuer --version <version>-helm --namespace cert-manager
 ```
 
 # License

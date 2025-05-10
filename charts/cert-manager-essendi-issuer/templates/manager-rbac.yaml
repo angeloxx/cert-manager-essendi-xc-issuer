@@ -2,9 +2,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "cert-manager-essendi-issuer.fullname" . }}-manager-role
+  name: {{ include "cert-manager-essendi-xc-issuer.fullname" . }}-manager-role
   labels:
-    {{- include "cert-manager-essendi-issuer.labels" . | nindent 4 }}
+    {{- include "cert-manager-essendi-xc-issuer.labels" . | nindent 4 }}
 rules:
   - apiGroups: [ "" ]
     resources: [ "events" ]
@@ -34,15 +34,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "cert-manager-essendi-issuer.fullname" . }}-manager-rolebinding
+  name: {{ include "cert-manager-essendi-xc-issuer.fullname" . }}-manager-rolebinding
   labels:
-    {{- include "cert-manager-essendi-issuer.labels" . | nindent 4 }}
+    {{- include "cert-manager-essendi-xc-issuer.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "cert-manager-essendi-issuer.serviceAccountName" . }}
+    name: {{ include "cert-manager-essendi-xc-issuer.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ include "cert-manager-essendi-issuer.fullname" . }}-manager-role
+  name: {{ include "cert-manager-essendi-xc-issuer.fullname" . }}-manager-role
   apiGroup: rbac.authorization.k8s.io
 {{- end }}
