@@ -12,7 +12,7 @@ jobs:
         id: docker-hub-retention
         uses: philiplehmann/docker-hub-retention@main
         with:
-          repository: angeloxx/cert-manager-essendi-issuer
+          repository: angeloxx/cert-manager-essendi-xc-issuer
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           multiple: |
