@@ -275,6 +275,10 @@ build-helm:
 	helm kubeconform --skip CustomResourceDefinition --summary charts/cert-manager-essendi-xc-issuer
 	helm package charts/cert-manager-essendi-xc-issuer -d helm/charts --version $(VERSION)-helm
 	helm repo index charts/charts --url https://angeloxx.github.io/cert-manager-essendi-xc-issuer
+ifdef GITHUB_OUTPUT
+	echo "IMAGE_VERSION=$(VERSION)" >> $(GITHUB_OUTPUT)
+endif
+
 
 .PHONY: build-helm-upload
 build-helm-upload: build-helm
