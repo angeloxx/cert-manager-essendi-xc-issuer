@@ -8,7 +8,15 @@ prepared HTTP requests and interpreting the server's HTTP responses.
 
 ## Requirements
 
-Essendi-XC Issuer has been tested with cert-manager v.1.13.0 and currently supports CertificateRequest CRD API version v1 only.
+Current operator version was tested with the following versions of the dependencies:
+
+| Component    | Tested versions |
+|--------------|-----------------|
+| Kubernetes   | 1.29 .. 1.30    |
+| cert-manager | 1.15 .. 1.16    |
+| Essendi XC   | 1.26.2          |
+
+and currently supports CertificateRequest CRD API version v1 only.
 
 # Configuration and usage
 ## Issuers
