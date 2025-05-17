@@ -24,8 +24,11 @@ jobs:
         uses: ko-build/setup-ko@v0.9
       - name: Set up Kubeconform
         uses: bmuschko/setup-kubeconform@v1
-      - uses: boonya/gh-action-name-generator@v1
+      - name: Generate a unique name
+        uses: boonya/gh-action-name-generator@v1
         id: generator
+        with:
+          style: lowerCase
       - name: Get next version
         id: get_next_version
         uses: thenativeweb/get-next-version@main
