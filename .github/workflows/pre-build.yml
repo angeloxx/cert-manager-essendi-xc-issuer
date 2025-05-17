@@ -1,4 +1,4 @@
-name: Pull-request builder
+name: Pull-request pre-release builder
 on:
   pull_request:
     types: [labeled, unlabeled, synchronize, opened, reopened, edited]
@@ -12,9 +12,18 @@ jobs:
     strategy:
       matrix:
         go-version: [ '1.24.0' ]
-
     steps:
       - uses: actions/checkout@v4
+
+      - name: Get next version
+        id: nextversion
+        uses: technote-space/get-next-version-action@v1
+      - name: Cleanup the next version number
+        id: nextversion-clean
+        run: echo "next=${INVAR//v/}" >> "$GITHUB_OUTPUT"
+        env:
+          INVAR: ${{ steps.nextversion.outputs.next }}
+
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
         with:
@@ -24,7 +33,6 @@ jobs:
         uses: ko-build/setup-ko@v0.9
       - name: Set up Kubeconform
         uses: bmuschko/setup-kubeconform@v1
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -34,7 +42,7 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: latest
+          IMAGE_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
         run: |
           make build-image
 
@@ -42,19 +50,13 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: latest
-          HELM_TAG_FORCED: 0.0.0-latest
+          IMAGE_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
+          HELM_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
           make helm
           make build-helm-upload
       - name: update the PR
-        uses: actions/github-script@v7
+        uses: KeisukeYamashita/create-comment@v1
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 built with success, image tag is latest, helm tag is 0.0.0-latest'
-            })
+          comment: |
+            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
