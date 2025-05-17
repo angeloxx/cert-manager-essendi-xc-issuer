@@ -16,18 +16,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Generate a unique name
-      uses: boonya/gh-action-name-generator@v1
-      id: generator
-      with:
-        style: lowerCase
-        spearator: "-"
-      - uses: wemogy/next-version-action@2.0.3
-        id: release-version
+        uses: boonya/gh-action-name-generator@v1
+        id: generator
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          projects: "Single"
-          branch: "main"
-          repo: "angeloxx/cert-manager-essendi-xc-issuer"
+          style: lowerCase
+          spearator: "-"
+        - uses: wemogy/next-version-action@2.0.3
+          id: release-version
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            projects: "Single"
+            branch: "main"
+            repo: "angeloxx/cert-manager-essendi-xc-issuer"
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
         with:
