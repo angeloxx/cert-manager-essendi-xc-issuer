@@ -37,7 +37,7 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}
+          IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
         run: |
           make build-image
 
