@@ -1,4 +1,4 @@
-name: Pull-request builder
+name: Pull-request pre-release builder
 on:
   pull_request:
     types: [labeled, unlabeled, synchronize, opened, reopened, edited]
