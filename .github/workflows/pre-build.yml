@@ -25,7 +25,7 @@ jobs:
         id: release-version
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          projects: 'Single'
+          projects: "Single"
           branch: "main"
           repo: "angeloxx/cert-manager-essendi-xc-issuer"
       - name: Setup Go ${{ matrix.go-version }}
