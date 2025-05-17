@@ -29,6 +29,7 @@ jobs:
         id: generator
         with:
           style: lowerCase
+          spearator: "-"
       - name: Get next version
         id: get_next_version
         uses: thenativeweb/get-next-version@main
