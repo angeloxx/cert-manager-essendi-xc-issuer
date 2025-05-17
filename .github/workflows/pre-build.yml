@@ -20,7 +20,7 @@ jobs:
         uses: technote-space/get-next-version-action@v1
       - name: Cleanup the next version number
         id: nextversion-clean
-        run: echo "next=${INVAR//v/} >> "$GITHUB_OUTPUT"
+        run: echo "next=${INVAR//v/}" >> "$GITHUB_OUTPUT"
         env:
           INVAR: ${{ steps.nextversion.outputs.next }}
 
