@@ -48,7 +48,7 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ process.env.NEXT_VERSION }}-next-${{ github.event.pull_request.head.sha }}
+          IMAGE_TAG_FORCED: ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}
         run: |
           make build-image
 
@@ -56,8 +56,8 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ process.env.NEXT_VERSION }}-next-${{ github.event.pull_request.head.sha }}
-          HELM_TAG_FORCED: ${{ process.env.NEXT_VERSION }}-next-${{ github.event.pull_request.head.sha }}-helm
+          IMAGE_TAG_FORCED: ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}
+          HELM_TAG_FORCED: ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
           make helm
           make build-helm-upload
@@ -65,4 +65,4 @@ jobs:
         uses: KeisukeYamashita/create-comment@v1
         with:
           comment: |
-            👋 pre-release built with success, image tag is latest, helm tag is ${{ process.env.NEXT_VERSION }}-next-${{ github.event.pull_request.head.sha }}-helm
+            👋 pre-release built with success, image tag is latest, helm tag is ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}-helm
