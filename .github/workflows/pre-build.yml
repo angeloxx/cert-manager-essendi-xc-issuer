@@ -24,11 +24,6 @@ jobs:
       - name: Get next version
         uses: technote-space/get-next-version-action@v1
 
-      - name: Get next minor version
-        id: semver
-        uses: 'WyriHaximus/github-action-next-semvers@v1'
-        with:
-          version: ${{ steps.previoustag.outputs.tag }}
 
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
