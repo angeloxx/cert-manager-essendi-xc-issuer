@@ -18,6 +18,11 @@ jobs:
       - name: Get next version
         id: nextversion
         uses: technote-space/get-next-version-action@v1
+      - name: Cleanup the next version number
+        id: nextversion-clean
+        run: echo "::set-output next=${INVAR//v/}"
+        env:
+          INVAR: ${{ steps.nextversion.outputs.next }}
 
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
@@ -37,7 +42,7 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
+          IMAGE_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
         run: |
           make build-image
 
@@ -45,8 +50,8 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
-          HELM_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
+          IMAGE_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
+          HELM_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
           make helm
           make build-helm-upload
@@ -54,4 +59,4 @@ jobs:
         uses: KeisukeYamashita/create-comment@v1
         with:
           comment: |
-            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
+            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
