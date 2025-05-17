@@ -30,7 +30,7 @@ jobs:
         with:
           style: lowerCase
           spearator: "-"
-      - uses: wemogy/next-version-action@2.0.2
+      - uses: wemogy/next-version-action@2.0.3
         id: release-version
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
