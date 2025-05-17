@@ -20,13 +20,19 @@ jobs:
         with:
           style: lowerCase
           separator: "-"
-      - uses: wemogy/next-version-action@2.0.3
-        id: release-version
+
+      - name: Get previous tag
+        id: previoustag
+        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get next minor version
+        id: semver
+        uses: 'WyriHaximus/github-action-next-semvers@v1'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          projects: "Single"
-          branch: "main"
-          repo: "cert-manager-essendi-xc-issuer"
+          version: ${{ steps.previoustag.outputs.tag }}
+
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
         with:
@@ -45,7 +51,7 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ steps.release-version.outputs.next-version }}-next-${{ github.event.pull_request.head.sha }}
+          IMAGE_TAG_FORCED: ${{ steps.semver.outputs.patch }}-next-${{ github.event.pull_request.head.sha }}
         run: |
           make build-image
 
@@ -53,8 +59,8 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ steps.release-version.outputs.next-version }}-next-${{ github.event.pull_request.head.sha }}
-          HELM_TAG_FORCED: ${{ steps.release-version.outputs.next-version }}-next-${{ github.event.pull_request.head.sha }}-helm
+          IMAGE_TAG_FORCED: ${{ steps.semver.outputs.patch }}-next-${{ github.event.pull_request.head.sha }}
+          HELM_TAG_FORCED: ${{ steps.semver.outputs.patch }}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
           make helm
           make build-helm-upload
@@ -62,4 +68,4 @@ jobs:
         uses: KeisukeYamashita/create-comment@v1
         with:
           comment: |
-            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.release-version.outputs.next-version }}-next-${{ github.event.pull_request.head.sha }}-helm
+            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.semver.outputs.patch }}-next-${{ github.event.pull_request.head.sha }}-helm
