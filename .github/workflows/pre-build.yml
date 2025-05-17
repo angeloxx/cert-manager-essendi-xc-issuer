@@ -14,16 +14,10 @@ jobs:
         go-version: [ '1.24.0' ]
     steps:
       - uses: actions/checkout@v4
-      - name: Generate a unique name
-        uses: boonya/gh-action-name-generator@v1
-        id: generator
-        with:
-          style: lowerCase
-          separator: "-"
 
       - name: Get next version
+        id: nextversion
         uses: technote-space/get-next-version-action@v1
-
 
       - name: Setup Go ${{ matrix.go-version }}
         uses: actions/setup-go@v5
@@ -51,8 +45,8 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}
-          HELM_TAG_FORCED: ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}-helm
+          IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
+          HELM_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
           make helm
           make build-helm-upload
@@ -60,4 +54,4 @@ jobs:
         uses: KeisukeYamashita/create-comment@v1
         with:
           comment: |
-            👋 pre-release built with success, image tag is latest, helm tag is ${process.env.NEXT_VERSION}-next-${{ github.event.pull_request.head.sha }}-helm
+            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
