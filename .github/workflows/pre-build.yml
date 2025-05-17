@@ -19,7 +19,7 @@ jobs:
         id: generator
         with:
           style: lowerCase
-          spearator: "-"
+          separator: "-"
       - uses: wemogy/next-version-action@2.0.3
         id: release-version
         with:
