@@ -106,10 +106,13 @@ you can use the following variables:
 
 We recommend to use the Helm chart to install the Essendi-XC Issuer. The Helm chart is available in the [cert-manager Helm repository](https://artifacthub.io/packages/search?kind=0&repo=cert-manager).
 
-
 ```console
 helm install essendi-xc-issuer oci://registry-1.docker.io/angeloxx/cert-manager-essendi-xc-issuer --version <version>-helm --namespace cert-manager
 ```
+
+# See also
+
+* [When cert-manager meets Essendi XC](https://medium.com/@angeloxx/when-cert-manager-meets-essendi-xc-7783e4f0fb42)
 
 # License
 
