@@ -1,3 +1,6 @@
+![version](https://img.shields.io/github/v/release/angeloxx/cert-manager-essendi-xc-issuer)
+![stars](https://img.shields.io/github/license/angeloxx/cert-manager-essendi-xc-issuer)
+
 # essendi-xc-issuer
 
 Essendi-XC Issuer is a cert-manager's CertificateRequest controller that uses [Essendi XC](https://xc.essendi.de/en/essendi-xc/]) 
