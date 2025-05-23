@@ -270,17 +270,17 @@ helm:
 
 .PHONY: build-helm
 build-helm:
-	sed -i.bak 's|tag: ".*"|tag: "$(VERSION)"|g' charts/cert-manager-essendi-xc-issuer/values.yaml
-	sed -i.bak 's|--version .*-helm|--version $(VERSION)-helm|g' README.md
+	sed -i.bak 's|tag: ".*"|tag: "$(HELM_TAG)"|g' charts/cert-manager-essendi-xc-issuer/values.yaml
+	sed -i.bak 's|--version .*-helm|--version $(HELM_TAG)-helm|g' README.md
 	helm kubeconform --skip CustomResourceDefinition --summary charts/cert-manager-essendi-xc-issuer
-	helm package charts/cert-manager-essendi-xc-issuer -d helm/charts --version $(VERSION)-helm
+	helm package charts/cert-manager-essendi-xc-issuer -d helm/charts --version $(HELM_TAG)-helm
 	helm repo index charts/charts --url https://angeloxx.github.io/cert-manager-essendi-xc-issuer
 ifdef GITHUB_OUTPUT
-	echo "IMAGE_VERSION=$(VERSION)" >> $(GITHUB_OUTPUT)
+	echo "HELM_VERSION=$(HELM_TAG)" >> $(GITHUB_OUTPUT)
 endif
 
 
 .PHONY: build-helm-upload
 build-helm-upload: build-helm
-	helm push helm/charts/cert-manager-essendi-xc-issuer-$(VERSION)-helm.tgz \
+	helm push helm/charts/cert-manager-essendi-xc-issuer-$(HELM_TAG)-helm.tgz \
 		oci://registry-1.docker.io/$(IMAGE_REGISTRY_NAMESPACE)
