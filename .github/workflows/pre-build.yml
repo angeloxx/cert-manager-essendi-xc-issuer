@@ -32,7 +32,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           IFS='.' read -r major minor patch <<< "version"
           next="$major.$minor.$((patch + 1))"
-          echo "next=next" >> $GITHUB_OUTPUT
+          echo "next=$next" >> "$GITHUB_OUTPUT"
       - name: Checkout the PR
         uses: actions/checkout@v4
         with:
