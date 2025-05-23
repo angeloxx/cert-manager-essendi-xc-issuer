@@ -30,10 +30,9 @@ jobs:
           # Rimuovi prefisso 'v' se presente
           version=${tag#v}
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "currentversion=${version//v/}" >> "$GITHUB_OUTPUT"
-          IFS='.' read -r major minor patch <<< "currentversion"
-          next_minor="$major.$((minor + 1)).0"
-          echo "next=$next_minor" >> $GITHUB_OUTPUT
+          IFS='.' read -r major minor patch <<< "version"
+          next="$major.$minor.$((patch + 1))"
+          echo "next=next" >> $GITHUB_OUTPUT
       - name: Checkout the PR
         uses: actions/checkout@v4
         with:
