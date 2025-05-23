@@ -276,7 +276,7 @@ build-helm:
 	helm package charts/cert-manager-essendi-xc-issuer -d helm/charts --version $(HELM_TAG)-helm
 	helm repo index charts/charts --url https://angeloxx.github.io/cert-manager-essendi-xc-issuer
 ifdef GITHUB_OUTPUT
-	echo "IMAGE_VERSION=$(VERSION)" >> $(GITHUB_OUTPUT)
+	echo "HELM_VERSION=$(HELM_TAG)" >> $(GITHUB_OUTPUT)
 endif
 
 
