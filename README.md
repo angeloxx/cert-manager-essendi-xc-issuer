@@ -1,7 +1,10 @@
 ![version](https://img.shields.io/github/v/release/angeloxx/cert-manager-essendi-xc-issuer)
 ![stars](https://img.shields.io/github/license/angeloxx/cert-manager-essendi-xc-issuer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/angeloxx/cert-manager-essendi-xc-issuer)](https://goreportcard.com/report/github.com/angeloxx/cert-manager-essendi-xc-issuer)
 
 # essendi-xc-issuer
+
+
 
 Essendi-XC Issuer is a cert-manager's CertificateRequest controller that uses [Essendi XC](https://xc.essendi.de/en/essendi-xc/]) 
 to sign certificates. Essendi XC is a service that provides multiple interfaces for requesting certificates from different CAs,
