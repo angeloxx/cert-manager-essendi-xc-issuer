@@ -282,5 +282,5 @@ endif
 
 .PHONY: build-helm-upload
 build-helm-upload: build-helm
-	helm push helm/charts/cert-manager-essendi-xc-issuer-$(VERSION)-helm.tgz \
+	helm push helm/charts/cert-manager-essendi-xc-issuer-$(HELM_TAG)-helm.tgz \
 		oci://registry-1.docker.io/$(IMAGE_REGISTRY_NAMESPACE)
