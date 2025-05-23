@@ -23,7 +23,8 @@ jobs:
       - name: Get next version
         id: nextversion
         uses: cycjimmy/semantic-release-action@v4
-        branch: main
+        with:
+          branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cleanup the next version number
