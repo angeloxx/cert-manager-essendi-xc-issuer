@@ -6,7 +6,7 @@
 
 
 
-Essendi-XC Issuer is a cert-manager's CertificateRequest controller that uses [Essendi XC](https://xc.essendi.de/en/essendi-xc/]) 
+Essendi-XC Issuer is a cert-manager's CertificateRequest controller that uses [Essendi XC](https://xc.essendi.de/en/essendi-xc/) 
 to sign certificates. Essendi XC is a service that provides multiple interfaces for requesting certificates from different CAs,
 like Microsoft ADCS or public CAs like D-Trust, DigiCert, QuoVadis, SwissSign. Essendi XC provides both ACME, SCEP and proprietary REST
 API; This implementation is a HTTP client that interacts with the Essendi XC API sending appropriately 
