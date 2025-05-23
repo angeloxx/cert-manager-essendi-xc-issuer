@@ -30,7 +30,7 @@ jobs:
           # Rimuovi prefisso 'v' se presente
           version=${tag#v}
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          IFS='.' read -r major minor patch <<< "version"
+          IFS='.' read -r major minor patch <<< "$version"
           next="$major.$minor.$((patch + 1))"
           echo "next=$next" >> "$GITHUB_OUTPUT"
       - name: Checkout the PR
