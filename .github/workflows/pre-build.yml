@@ -22,16 +22,14 @@ jobs:
       #   uses: technote-space/get-next-version-action@v1
       - name: Get next version
         id: nextversion
-        uses: cycjimmy/semantic-release-action@v4
-        with:
-          branch: main
+        uses: bitshifted/git-auto-semver@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cleanup the next version number
         id: nextversion-clean
         run: echo "next=${INVAR//v/}" >> "$GITHUB_OUTPUT"
         env:
-          INVAR: ${{ steps.nextversion.outputs.new_release_version }}
+          INVAR: ${{ steps.nextversion.outputs.version-string }}
       - name: Checkout the PR
         uses: actions/checkout@v4
         with:
