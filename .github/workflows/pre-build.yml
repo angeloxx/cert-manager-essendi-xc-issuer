@@ -22,14 +22,18 @@ jobs:
       #   uses: technote-space/get-next-version-action@v1
       - name: Get next version
         id: nextversion
-        uses: bitshifted/git-auto-semver@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Cleanup the next version number
-        id: nextversion-clean
-        run: echo "next=${INVAR//v/}" >> "$GITHUB_OUTPUT"
-        env:
-          INVAR: ${{ steps.nextversion.outputs.version-string }}
+        run: |
+          response=$(curl -s -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          tag=$(echo "$response" | jq -r .tag_name)
+          # Rimuovi prefisso 'v' se presente
+          version=${tag#v}
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "currentversion=${version//v/}" >> "$GITHUB_OUTPUT"
+          IFS='.' read -r major minor patch <<< "currentversion"
+          next_minor="$major.$((minor + 1)).0"
+          echo "next=$next_minor" >> $GITHUB_OUTPUT
       - name: Checkout the PR
         uses: actions/checkout@v4
         with:
@@ -53,7 +57,7 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
+          IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
         run: |
           make build-image
 
@@ -61,8 +65,8 @@ jobs:
         env:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
-          IMAGE_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
-          HELM_TAG_FORCED: ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
+          IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
+          HELM_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
           make helm
           make build-helm-upload
@@ -70,4 +74,4 @@ jobs:
         uses: KeisukeYamashita/create-comment@v1
         with:
           comment: |
-            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.nextversion-clean.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
+            👋 pre-release built with success, image tag is latest, helm tag is ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
