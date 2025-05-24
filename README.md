@@ -1,6 +1,7 @@
 ![version](https://img.shields.io/github/v/release/angeloxx/cert-manager-essendi-xc-issuer)
 ![stars](https://img.shields.io/github/license/angeloxx/cert-manager-essendi-xc-issuer)
 [![Go Report Card](https://goreportcard.com/badge/github.com/angeloxx/cert-manager-essendi-xc-issuer)](https://goreportcard.com/report/github.com/angeloxx/cert-manager-essendi-xc-issuer)
+[![Vulnerability check](https://github.com/angeloxx/cert-manager-essendi-xc-issuer/actions/workflows/periodical_vunlcheck.yml/badge.svg)](https://github.com/angeloxx/cert-manager-essendi-xc-issuer/actions/workflows/periodical_vunlcheck.yml)
 
 # essendi-xc-issuer
 
