@@ -158,7 +158,7 @@ docker-push: ## Push docker image with the manager.
 
 PLATFORMS ?= linux/arm64,linux/amd64
 .PHONY: build-image
-build-image: ko # vulncheck
+build-image: ko vulncheck
 	KO_DOCKER_REPO=${IMAGE} \
     ko build --tags ${IMAGE_TAG} --bare --sbom ${IMG_SBOM} \
       --image-label org.opencontainers.image.source="https://github.com/angeloxx/cert-manager-essendi-xc-issuer" \
