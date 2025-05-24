@@ -19,7 +19,7 @@ Current operator version was tested with the following versions of the dependenc
 | Component    | Tested versions |
 |--------------|-----------------|
 | Kubernetes   | 1.29 .. 1.30    |
-| cert-manager | 1.15 .. 1.16    |
+| cert-manager | 1.15 .. 1.17    |
 | Essendi XC   | 1.26.2          |
 
 and currently supports CertificateRequest CRD API version v1 only.
