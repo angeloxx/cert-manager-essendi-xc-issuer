@@ -6,7 +6,7 @@ toolchain go1.24.3
 
 require (
 	github.com/cert-manager/cert-manager v1.17.2
-	github.com/go-logr/logr v1.4.2
+	github.com/go-logr/logr v1.4.3
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/oauth2 v0.30.0
 	k8s.io/api v0.33.1
