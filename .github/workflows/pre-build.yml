@@ -14,7 +14,7 @@ jobs:
         go-version: [ '1.24.3' ]
     steps:
       - name: Checkout main in order to get the next version
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
       # - name: Get next version
@@ -34,7 +34,7 @@ jobs:
           next="$major.$minor.$((patch + 1))"
           echo "next=$next" >> "$GITHUB_OUTPUT"
       - name: Checkout the PR
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
