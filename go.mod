@@ -1,8 +1,6 @@
 module github.com/angeloxx/cert-manager-essendi-xc-issuer
 
-go 1.24.0
-
-toolchain go1.25.3
+go 1.25.1
 
 require (
 	github.com/cert-manager/cert-manager v1.18.2
