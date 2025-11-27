@@ -7,10 +7,10 @@
 
 
 
-Essendi-XC Issuer is a cert-manager's CertificateRequest controller that uses [Essendi XC](https://xc.essendi.de/en/essendi-xc/) 
-to sign certificates. Essendi XC is a service that provides multiple interfaces for requesting certificates from different CAs,
-like Microsoft ADCS or public CAs like D-Trust, DigiCert, QuoVadis, SwissSign. Essendi XC provides both ACME, SCEP and proprietary REST
-API; This implementation is a HTTP client that interacts with the Essendi XC API sending appropriately 
+essendi-xc-issuer is a cert-manager's CertificateRequest controller that uses [essendi xc](https://xc.essendi.de/en/essendi-xc/) 
+to sign certificates. essendi xc is a service that provides multiple interfaces for requesting certificates from different CAs,
+like Microsoft ADCS or public CAs like D-Trust, DigiCert, QuoVadis, SwissSign. essendi xc provides both ACME, SCEP and proprietary REST
+API; This implementation is a HTTP client that interacts with the essendi xc API sending appropriately 
 prepared HTTP requests and interpreting the server's HTTP responses.
 
 ## Requirements
@@ -19,16 +19,16 @@ Current operator version was tested with the following versions of the dependenc
 
 | Component    | Tested versions |
 |--------------|-----------------|
-| Kubernetes   | 1.29 .. 1.30    |
-| cert-manager | 1.15 .. 1.17    |
-| Essendi XC   | 1.26.2          |
+| Kubernetes   | 1.29 .. 1.34    |
+| cert-manager | 1.15 .. 1.19    |
+| essendi xc   | 1.26.2 - 2.2.3  |
 
 and currently supports CertificateRequest CRD API version v1 only.
 
 # Configuration and usage
 ## Issuers
 
-The Essendi-XC service data can be configured in Issuer or ClusterIssuer CRD objects e.g.:
+The essendi xc service data can be configured in Issuer or ClusterIssuer CRD objects e.g.:
 
 ```yaml
 apiVersion: essendixc.angeloxx.ch/v1alpha1
@@ -44,13 +44,13 @@ spec:
 ```
 
 Required parameters are:
-* authSecretName: name of the secret that contains the credentials used to authenticate with the Essendi XC API
-* ignoreHostInApiResponse: if set to true, the issuer will ignore the host in the API response. This is useful when using a load balancer or reverse proxy in front of the Essendi XC API.
-* profileName: name of the profile defined in the Essendi XC. This is the profile that will be used to issue the certificate.
-* subscriberName: name of the subscriber defined in the Essendi XC.
-* url: the base URL of the Essendi XC API server.
+* authSecretName: name of the secret that contains the credentials used to authenticate with the essendi xc API
+* ignoreHostInApiResponse: if set to true, the issuer will ignore the host in the API response. This is useful when using a load balancer or reverse proxy in front of the essendi xc API.
+* profileName: name of the profile defined in the essendi xc. This is the profile that will be used to issue the certificate.
+* subscriberName: name of the subscriber defined in the essendi xc.
+* url: the base URL of the essendi xc API server.
 
-optionally you can define also a set of custom fields that will be passed to the Essendi XC API and added as metadata to all the requests. Custom fields must be previously defined in the Essendi XC, then the CRD can be used to set it, eg:
+optionally you can define also a set of custom fields that will be passed to the essendi xc API and added as metadata to all the requests. Custom fields must be previously defined in the essendi xc, then the CRD can be used to set it, eg:
 
 ```yaml
 apiVersion: essendixc.angeloxx.ch/v1alpha1
@@ -74,7 +74,7 @@ spec:
     value: cloudnatives@bigcorp.ch
 ```
 
-You have also to define the secret containing the credentials used to authenticate with the Essendi XC API. The secret must be in the same namespace as the cert-manager controller:
+You have also to define the secret containing the credentials used to authenticate with the essendi xc API. The secret must be in the same namespace as the cert-manager controller:
 
 ```yaml
 apiVersion: v1
@@ -90,8 +90,8 @@ data:
 ```
 
 The secret must be Opaque and contain the following fields:
-* client-id: the client ID used to authenticate with the Essendi XC API
-* client-secret: the client secret used to authenticate with the Essendi XC API
+* client-id: the client ID used to authenticate with the essendi xc API
+* client-secret: the client secret used to authenticate with the essendi xc API
 * signature-key: the key used to sign the request
 * token: the token used to authenticate
 
@@ -119,7 +119,7 @@ helm install essendi-xc-issuer oci://registry-1.docker.io/angeloxx/cert-manager-
 
 # See also
 
-* [When cert-manager meets Essendi XC](https://medium.com/@angeloxx/when-cert-manager-meets-essendi-xc-7783e4f0fb42)
+* [When cert-manager meets essendi xc](https://medium.com/@angeloxx/when-cert-manager-meets-essendi-xc-7783e4f0fb42)
 
 # License
 
