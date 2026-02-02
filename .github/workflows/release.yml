@@ -70,3 +70,11 @@ jobs:
 
           draft: true
           prerelease: false
+
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: angeloxx/cert-manager-essendi-xc-issuer
+          readme-filepath: ./README.md
