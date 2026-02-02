@@ -4,11 +4,11 @@ on:
     - cron: '0 */6 * * *'
 
 permissions:
-  security-events: write
+  contents: write
 
 jobs:
   vuln-check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
