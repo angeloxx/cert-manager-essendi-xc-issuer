@@ -2,7 +2,17 @@ name: Vulnerability check
 on:
   schedule:
     - cron: '0 */6 * * *'
-
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
 permissions:
   contents: write
 
