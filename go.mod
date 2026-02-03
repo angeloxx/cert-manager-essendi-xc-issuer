@@ -3,7 +3,7 @@ module github.com/angeloxx/cert-manager-essendi-xc-issuer
 go 1.25.6
 
 require (
-	github.com/cert-manager/cert-manager v1.19.2
+	github.com/cert-manager/cert-manager v1.19.3
 	github.com/go-logr/logr v1.4.3
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/oauth2 v0.34.0
