@@ -328,6 +328,9 @@ func (r *CertificateRequestReconciler) Reconcile(ctx context.Context, req ctrl.R
 		return ctrl.Result{}, fmt.Errorf("%w: %v", errSignerBuilder, err)
 	}
 	certificateRequest.Status.Certificate = signed
+	if ca := extractCAFromPEMBundle(signed); ca != nil {
+		certificateRequest.Status.CA = ca
+	}
 	report(cmapi.CertificateRequestReasonIssued, "Signed", false, nil)
 
 	return ctrl.Result{}, nil
