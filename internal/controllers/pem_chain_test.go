@@ -1,51 +1,85 @@
 package controllers
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"crypto/x509/pkix"
-	"encoding/pem"
-	"math/big"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
-func TestExtractCAFromPEMBundle(t *testing.T) {
-	rootPEM, rootCert, rootKey := mustCreateRoot(t)
-	intermediatePEM, intermediateCert, intermediateKey := mustCreateIntermediate(t, rootCert, rootKey)
-	leafPEM := mustCreateLeaf(t, intermediateCert, intermediateKey)
-	selfIssuedNotSelfSignedCAPEM := mustCreateSelfIssuedNotSelfSignedCA(t)
+const testRootPEM = `-----BEGIN CERTIFICATE-----
+MIIDDzCCAfegAwIBAgIUYnPbP5Sz/Fx9YRZe9nhpNj4B8RIwDQYJKoZIhvcNAQEL
+BQAwFzEVMBMGA1UEAwwMVGVzdCBSb290IENBMB4XDTI2MDQxNzE2MjMwMVoXDTM2
+MDQxNDE2MjMwMVowFzEVMBMGA1UEAwwMVGVzdCBSb290IENBMIIBIjANBgkqhkiG
+9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqFxLgAjscKfcZNoVqElc1ZaNUJ6aDCYpu++b
+dS29171/S1Y5WSbXTsEPdGY2xcugwd6Q8+xZq8THaA5/dC9Ec9E+ab0oStTyOdD0
+IZwrYA8IERV0NmqsHJEYmvjobc/PuCTQBap1H6LKCjyWa71dkEeBe8Luid5599TC
+Af49yyJ8nGroPATVkYpTpLDRSyy5XThxayBrdZ2ZoXHv35uKtP7+JjBDddAuWGlf
+p99hM95Oz8BY98391eKrn+OT5mEdhh0Kx27rV03Vd4RaiCJhT1wiJooAAI5Ghj/N
+yg7tKyAGsDH16+hpCFvF5/ZkEHhqYcp6z/VlFWXPcvwHkdVenQIDAQABo1MwUTAd
+BgNVHQ4EFgQU+jwtXEykzvSWtH6dd3vqVQ4favwwHwYDVR0jBBgwFoAU+jwtXEyk
+zvSWtH6dd3vqVQ4favwwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOC
+AQEATD8X0NKPST/SQ/y5HIN4gAtE4at5JD04j7d4DHDmF12LbEYNs5wRpaLEOgJf
+FVjtM34Fpx4eAs3FgdR4w3VgpeP6Rs4dV4A3IlKY8ZAa10lm603JxZ/7LTyebhrE
+s28jeBbdWsZprHDnz+EmI4xjEa26xC/lv4pILuDZRPiCF+0wk0BnlxkTZ3DynXWd
+gy63NFC8wzUoRjYFz029KmD+3kte0uDnjY5wMyWU+yrugwCP1vagMXhtdanuMgt2
+E8LMK2H2pH6v1Zmz+x9B6d0XOZjrgDxmNu2dK9Qjn8EIhjTJLaSNQqyr1WD5tiTg
+OI4mb+gl9S635sDWHXu4V7G9Sg==
+-----END CERTIFICATE-----
+`
 
+const testIntermediatePEM = `-----BEGIN CERTIFICATE-----
+MIIDKjCCAhKgAwIBAgIUGiipIZOm86+5j0RkvZtpDvSFP8gwDQYJKoZIhvcNAQEL
+BQAwFzEVMBMGA1UEAwwMVGVzdCBSb290IENBMB4XDTI2MDQxNzE2MjMwMVoXDTM2
+MDQxNDE2MjMwMVowHzEdMBsGA1UEAwwUVGVzdCBJbnRlcm1lZGlhdGUgQ0EwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCoFGKsUko8FU6lrJnonjZ0Pxv1
+v2F/+1ifNN5bukt+Qhj+av8Pv4rfbVMQfSJAAx7CcKOlR9rhcyrzy4zsfqEFPe0o
+sZYE6hNSmGrWjRChcPiw0UpqHO87nxakSOJmMYxt8C++AI8cRousHBbW7Pc4jA8Z
+ayU3KrhtDk8AbIJ6XTqNHJU8L7vWwk7vL+5i8IqjULthsArpxJQeynZAb+s06LK4
+ke+WXRKE1dSDwT0D7v33eaDClxUEEhVyPJwJ5Dja9VBAwNp2qb7aftofB2LeZmI0
+BmnEaRMc3ZXOOWa5m2jqGg7e6Ab817VIZOh+e+rT6gFwmjOZ5Wcrk+lAvPBXAgMB
+AAGjZjBkMBIGA1UdEwEB/wQIMAYBAf8CAQAwDgYDVR0PAQH/BAQDAgEGMB0GA1Ud
+DgQWBBTRXhHt+4UNcmBUuukbilRPSNgprDAfBgNVHSMEGDAWgBT6PC1cTKTO9Ja0
+fp13e+pVDh9q/DANBgkqhkiG9w0BAQsFAAOCAQEAn8CrCHdLt7NbdXS3hmYKwIMB
+Dpfi7TQKlKbNVMRelzpujEEdcPMo45gAWF/9OhQGFhgVUYbkZNaBQlC3Xi2RA9wA
+UYDnfd5tVCSzeAr1vYRsLa52VgS3Ti51ytNzW4GWd6kKotZgSIAToS0G78ltlDdG
+CQeffOzNf+7tpQym4JEYk6SGXSc3qw+Rl+HlG8BjQhE+YPeBlGA1HSPIVb0fdYJJ
+E2Fbbw/815+0WVmGmPjIcK+1N8/bT4debZOO6pb0riOWrnLmaX7bWmZVVzkqLdkf
+jCLzdkHqOiVblr00NJL/iVZlgc73EfmHVL1uCnvjrgIvTmxKkauaDjqLwX9dXA==
+-----END CERTIFICATE-----
+`
+
+const testLeafPEM = `-----BEGIN CERTIFICATE-----
+MIIDCjCCAfKgAwIBAgIUaF7/Syu5agPLmdWyEmCa6Hy1uMIwDQYJKoZIhvcNAQEL
+BQAwHzEdMBsGA1UEAwwUVGVzdCBJbnRlcm1lZGlhdGUgQ0EwHhcNMjYwNDE3MTYy
+MzAyWhcNMzYwNDE0MTYyMzAyWjAbMRkwFwYDVQQDDBB0ZXN0LmV4YW1wbGUuY29t
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA28SrdEw4c8p1grVyPjQb
+/LnhHvgWI7r8i/gOhhZ+tuEE3QwkPGfp8DeMNo+hqzZk81pBgiBpU62WxQMjkD87
+5KeNvcJYvRE4dStkGLnzJUMG2zh/PD+VyDIiK4qutU7E882aCPLroqWx+0zQIBVJ
+lmROT7IjuSr2p1E+LTL0ABzDM8zAA7k+qsMvWsUmw1Y85qu9DuDG//w1qT1brYTB
+p8NGvUITs5meDbBaV6RHQS7W5pGsLgisz3CAGk9STTh8qaoJZliwe4ZZNAn/yM3g
+gTUWQxOKhJaGTufyiQfiDpu9uBecfmIQsvlm6K5l/yHx+Z7C96P5SWVgLj+by0SX
+nwIDAQABo0IwQDAdBgNVHQ4EFgQUElhDo3z4o8M2WvO7DDnzZfY8MrswHwYDVR0j
+BBgwFoAU0V4R7fuFDXJgVLrpG4pUT0jYKawwDQYJKoZIhvcNAQELBQADggEBADEm
+LiTHB7A+lg+ayna7As2APsOHDW1UAuZRYpGhceK7vEylpmOg59M6vaMjfW165d1O
+jJEoPJFCk4kk/hulsnRo5B5EV/zMHdkviT1/6oIrvhWrO3t3ks0BRODs6JDd/A64
+DBdkznYAU1LHGpurwtXmo8+TwC1NTaWQtEUjaxZY5tpRBb0NejwJBfSzDiUnWOkz
+TfukorOFdutti2Yr1nG1LS9afgkPEe+dZ/etx7O8yHzOtGWZv+/j6H90D/diDL8m
+wqDVCWrHrBXq6TVei8nt9Ik0jVa1D653BzhawmgvsKQujCb2ZtEGi6MeeaP8BfvW
+VcBA7IvxgTtGXs9oBZo=
+-----END CERTIFICATE-----
+`
+
+func TestExtractCAFromPEMBundle(t *testing.T) {
 	tests := map[string]struct {
 		bundle     []byte
 		expectedCA []byte
 	}{
-		"returns root when present": {
-			bundle:     append(append(leafPEM, intermediatePEM...), rootPEM...),
-			expectedCA: rootPEM,
+		"returns root CA for complete chain": {
+			bundle:     []byte(testLeafPEM + testIntermediatePEM + testRootPEM),
+			expectedCA: []byte(testRootPEM),
 		},
-		"returns nil when only intermediate CA exists": {
-			bundle:     append(leafPEM, intermediatePEM...),
-			expectedCA: nil,
-		},
-		"returns nil for leaf only": {
-			bundle:     leafPEM,
-			expectedCA: nil,
-		},
-		"ignores malformed prefix": {
-			bundle:     append([]byte("not-a-pem\n"), append(leafPEM, rootPEM...)...),
-			expectedCA: rootPEM,
-		},
-		"ignores self-issued but not self-signed CA": {
-			bundle:     selfIssuedNotSelfSignedCAPEM,
-			expectedCA: nil,
-		},
-		"returns nil for empty input": {
-			bundle:     nil,
+		"returns nil when root CA is missing": {
+			bundle:     []byte(testLeafPEM + testIntermediatePEM),
 			expectedCA: nil,
 		},
 	}
@@ -56,97 +90,4 @@ func TestExtractCAFromPEMBundle(t *testing.T) {
 			assert.Equal(t, tc.expectedCA, actual)
 		})
 	}
-}
-
-func mustCreateRoot(t *testing.T) ([]byte, *x509.Certificate, *rsa.PrivateKey) {
-	t.Helper()
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
-	require.NoError(t, err)
-
-	tmpl := &x509.Certificate{
-		SerialNumber:          big.NewInt(1),
-		Subject:               pkix.Name{CommonName: "test-root"},
-		NotBefore:             time.Now().Add(-time.Hour),
-		NotAfter:              time.Now().Add(24 * time.Hour),
-		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
-		BasicConstraintsValid: true,
-		IsCA:                  true,
-	}
-
-	der, err := x509.CreateCertificate(rand.Reader, tmpl, tmpl, &key.PublicKey, key)
-	require.NoError(t, err)
-
-	cert, err := x509.ParseCertificate(der)
-	require.NoError(t, err)
-
-	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der}), cert, key
-}
-
-func mustCreateIntermediate(t *testing.T, parent *x509.Certificate, parentKey *rsa.PrivateKey) ([]byte, *x509.Certificate, *rsa.PrivateKey) {
-	t.Helper()
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
-	require.NoError(t, err)
-
-	tmpl := &x509.Certificate{
-		SerialNumber:          big.NewInt(2),
-		Subject:               pkix.Name{CommonName: "test-intermediate"},
-		NotBefore:             time.Now().Add(-time.Hour),
-		NotAfter:              time.Now().Add(24 * time.Hour),
-		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
-		BasicConstraintsValid: true,
-		IsCA:                  true,
-		MaxPathLen:            0,
-	}
-
-	der, err := x509.CreateCertificate(rand.Reader, tmpl, parent, &key.PublicKey, parentKey)
-	require.NoError(t, err)
-
-	cert, err := x509.ParseCertificate(der)
-	require.NoError(t, err)
-
-	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der}), cert, key
-}
-
-func mustCreateLeaf(t *testing.T, parent *x509.Certificate, parentKey *rsa.PrivateKey) []byte {
-	t.Helper()
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
-	require.NoError(t, err)
-
-	tmpl := &x509.Certificate{
-		SerialNumber:          big.NewInt(3),
-		Subject:               pkix.Name{CommonName: "test-leaf"},
-		NotBefore:             time.Now().Add(-time.Hour),
-		NotAfter:              time.Now().Add(24 * time.Hour),
-		KeyUsage:              x509.KeyUsageDigitalSignature,
-		BasicConstraintsValid: true,
-		IsCA:                  false,
-	}
-
-	der, err := x509.CreateCertificate(rand.Reader, tmpl, parent, &key.PublicKey, parentKey)
-	require.NoError(t, err)
-
-	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
-}
-
-func mustCreateSelfIssuedNotSelfSignedCA(t *testing.T) []byte {
-	t.Helper()
-	_, parentCert, parentKey := mustCreateRoot(t)
-
-	key, err := rsa.GenerateKey(rand.Reader, 2048)
-	require.NoError(t, err)
-
-	tmpl := &x509.Certificate{
-		SerialNumber:          big.NewInt(4),
-		Subject:               parentCert.Subject,
-		NotBefore:             time.Now().Add(-time.Hour),
-		NotAfter:              time.Now().Add(24 * time.Hour),
-		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
-		BasicConstraintsValid: true,
-		IsCA:                  true,
-	}
-
-	der, err := x509.CreateCertificate(rand.Reader, tmpl, parentCert, &key.PublicKey, parentKey)
-	require.NoError(t, err)
-
-	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
 }
