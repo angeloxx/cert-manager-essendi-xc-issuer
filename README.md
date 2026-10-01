@@ -7,7 +7,7 @@
 
 
 
-essendi-xc-issuer is a cert-manager's CertificateRequest controller that uses [essendi xc](https://xc.essendi.de/en/essendi-xc/) 
+essendi-xc-issuer is a cert-manager's CertificateRequest controller that uses [essendi xc](https://essendi-it.com/en/certificate-management-essendi-xc/) 
 to sign certificates. essendi xc is a service that provides multiple interfaces for requesting certificates from different CAs,
 like Microsoft ADCS or public CAs like D-Trust, DigiCert, QuoVadis, SwissSign. essendi xc provides both ACME, SCEP and proprietary REST
 API; This implementation is a HTTP client that interacts with the essendi xc API sending appropriately 
