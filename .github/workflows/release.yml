@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ '1.27.2' ]
+        go-version: [ '1.27.3' ]
 
     steps:
       - uses: actions/checkout@v7
@@ -42,7 +42,6 @@ jobs:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
         run: |
-          make helm
           make build-helm-upload
 
       - name: Extract version

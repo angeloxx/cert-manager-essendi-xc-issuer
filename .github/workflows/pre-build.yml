@@ -11,7 +11,7 @@ jobs:
     if: contains(join(github.event.pull_request.labels.*.name, ','), 'pre-release')
     strategy:
       matrix:
-        go-version: [ '1.27.2' ]
+        go-version: [ '1.27.3' ]
     steps:
       - name: Checkout main in order to get the next version
         uses: actions/checkout@v7
@@ -67,7 +67,6 @@ jobs:
           IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
           HELM_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
-          make helm
           make build-helm-upload
       - name: update the PR
         uses: KeisukeYamashita/create-comment@v1
