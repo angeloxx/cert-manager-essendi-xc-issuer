@@ -265,18 +265,11 @@ build-licenses: licenses
 check-licenses: licenses
 	go-licenses check github.com/angeloxx/cert-manager-essendi-xc-issuer --allowed_licenses=Apache-2.0,BSD-3-Clause,BS2-3-Clause,BSD-2-Clause,ISC,MIT
 
-helm:
-	if [[ "$$(helm version --short)" == v4* ]]; then \
-		helm plugin install --verify=false --version 0.6.4.1 https://github.com/melmorabity/helm-kubeconform; \
-	else \
-		helm plugin install https://github.com/melmorabity/helm-kubeconform --version 0.6.4.1; \
-	fi
-
 .PHONY: build-helm
 build-helm:
 	sed -i.bak 's|tag: ".*"|tag: "$(HELM_TAG)"|g' charts/cert-manager-essendi-xc-issuer/values.yaml
 	sed -i.bak 's|--version .*-helm|--version $(HELM_TAG)-helm|g' README.md
-	helm kubeconform --skip CustomResourceDefinition --summary charts/cert-manager-essendi-xc-issuer
+	helm template cert-manager-essendi-xc-issuer charts/cert-manager-essendi-xc-issuer | kubeconform --skip CustomResourceDefinition --summary -
 	helm package charts/cert-manager-essendi-xc-issuer -d helm/charts --version $(HELM_TAG)-helm
 	helm repo index charts/charts --url https://angeloxx.github.io/cert-manager-essendi-xc-issuer
 ifdef GITHUB_OUTPUT

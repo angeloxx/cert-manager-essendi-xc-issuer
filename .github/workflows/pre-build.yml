@@ -67,7 +67,6 @@ jobs:
           IMAGE_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}
           HELM_TAG_FORCED: ${{ steps.nextversion.outputs.next }}-next-${{ github.event.pull_request.head.sha }}-helm
         run: |
-          make helm
           make build-helm-upload
       - name: update the PR
         uses: KeisukeYamashita/create-comment@v1

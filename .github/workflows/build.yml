@@ -39,5 +39,4 @@ jobs:
           IMAGE_TAG_FORCED: latest
           HELM_TAG_FORCED: 0.0.0-latest
         run: |
-          make helm
           make build-helm-upload

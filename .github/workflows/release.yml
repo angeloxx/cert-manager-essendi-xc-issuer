@@ -42,7 +42,6 @@ jobs:
           IMAGE_REGISTRY_NAMESPACE: angeloxx
           IMAGE_REGISTRY: docker.io
         run: |
-          make helm
           make build-helm-upload
 
       - name: Extract version
