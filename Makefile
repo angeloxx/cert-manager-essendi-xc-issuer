@@ -266,7 +266,11 @@ check-licenses: licenses
 	go-licenses check github.com/angeloxx/cert-manager-essendi-xc-issuer --allowed_licenses=Apache-2.0,BSD-3-Clause,BS2-3-Clause,BSD-2-Clause,ISC,MIT
 
 helm:
-	helm plugin install https://github.com/melmorabity/helm-kubeconform --version 0.6.4.1
+	if [[ "$$(helm version --short)" == v4* ]]; then \
+		helm plugin install --verify=false --version 0.6.4.1 https://github.com/melmorabity/helm-kubeconform; \
+	else \
+		helm plugin install https://github.com/melmorabity/helm-kubeconform --version 0.6.4.1; \
+	fi
 
 .PHONY: build-helm
 build-helm:
