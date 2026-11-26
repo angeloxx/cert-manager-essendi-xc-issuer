@@ -7,9 +7,9 @@ require (
 	github.com/go-logr/logr v1.4.4
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/oauth2 v0.38.0
-	k8s.io/api v0.37.2
-	k8s.io/apimachinery v0.37.2
-	k8s.io/client-go v0.37.2
+	k8s.io/api v0.37.3
+	k8s.io/apimachinery v0.37.3
+	k8s.io/client-go v0.37.3
 	k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab
 	sigs.k8s.io/controller-runtime v0.25.2
 )
